@@ -49,8 +49,8 @@ if np.random.rand()<prob_random_choice:
 else:
     # choice with a prob proportional to the number of errors
     probs = np.array([(len(v)-sum(v)+0.5) for v in s.values()])
-    print(s)
-    print(probs)
+    #print(s)
+    #print(probs)
     probs= np.cumsum(probs/probs.sum())
     rnd = np.random.rand()
     idx = bisect.bisect_left(probs, rnd)
@@ -77,7 +77,7 @@ with open(os.path.join('verbos',verb,mood,tempo)) as f:
     temp = deque(s[verb_code],10)
     temp.append(1-err)
     s[verb_code] = list(temp)
-    print(sum(temp)/len(temp))
+    #print(sum(temp)/len(temp))
     with open(stats, 'w') as s_file:
         json.dump(s, s_file)
 
