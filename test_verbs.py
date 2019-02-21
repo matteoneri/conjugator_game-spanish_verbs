@@ -19,7 +19,8 @@ code_map = {'indicativo':{'conditional compuesto':'icc',
                            'preterito imperfecto -ese':'spi2',
                            'preterito perfecto':'spp',
                            'preterito pluscuamperfecto':'sp+',
-                           'preterito pluscuamperfecto -ese':'sp+2'}}
+                           'preterito pluscuamperfecto -ese':'sp+2'},
+            'imperativo':{'afirmativo':'ia'}}
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in temp}
@@ -43,7 +44,8 @@ else:
 if np.random.rand()<prob_random_choice:
     # random choice
     verb = np.random.choice(verbs)
-    mood = np.random.choice(['indicativo','subjuntivo'])
+    #mood = np.random.choice(['imperativo'])#['indicativo','subjuntivo','imperativo'] 
+    mood = np.random.choice(['indicativo','subjuntivo','imperativo'])
     tempo = np.random.choice(os.listdir(os.path.join('verbos',verb,mood)))
     verb_code = '{}_{}'.format(verb,code_map[mood][tempo])
 else:
@@ -68,13 +70,15 @@ with open(os.path.join('verbos',verb,mood,tempo)) as f:
     print()
     err = False
     for p,v in zip(['yo','tu','el/ella','nosotros','vosotros','ell@s'],f):
+        if mood=='imperativo':
+            if p=='yo': continue
         i = input('{} '.format(p))
         if i!=v.strip():
             print('No! {} {}'.format(p, v))
             err=True
 
     # change stat
-    temp = deque(s[verb_code],10)
+    temp = deque(s[verb_code],5)
     temp.append(1-err)
     s[verb_code] = list(temp)
     #print(sum(temp)/len(temp))
