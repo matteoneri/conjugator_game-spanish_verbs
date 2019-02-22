@@ -6,7 +6,7 @@ from queue import deque
 from functools import reduce
 import bisect
 
-code_map = {'indicativo':{'conditional compuesto':'icc',
+code_map = {'indicativo':{'conditional perfecto':'icp',
                           'conditional simple':'ics',
                           'futuro simple':'ifs',
                           'presente':'ip',
@@ -45,6 +45,21 @@ class conjugator:
                            'er':['í','iste','ió','imos','isteis','ieron'],
                            'ir':['í','iste','ió','imos','isteis','ieron']}
             return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+        elif tempo=='conditional simple':
+            desinencias = ['ía','ías','ía','íamos','íais','ían']
+            return [self.infinitivo+d for d in desinencias[self.classe]]
+        elif tempo=='preterito perfecto compuesto':
+            haber = ['he','has','ha','hemos','habéis','han']
+            return ["{} {}".format(h,self.participio) for h in haber]
+        elif tempo=='preterito pluscuamperfecto':
+            haber = ['había','habías','había','habíamos','habíais','habían']
+            return ["{} {}".format(h,self.participio) for h in haber]
+        elif tempo=='conditional perfecto':
+            haber = ['habría','habrías','habría','habríamos','habríais','habrían']
+            return ["{} {}".format(h,self.participio) for h in haber]
+        elif tempo=='futuro simple':
+            desinencias = ['é','ás','á','emos','éis','án']
+            return [self.infinitivo+d for d in desinencias[self.classe]]
 
 
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
