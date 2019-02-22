@@ -68,10 +68,32 @@ class conjugator:
                            'ir':['a','as','a','amos','áis','an']}
             return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
         elif tempo=='preterito imperfecto':
-            desinencias = {'ar':['ara','aras','ara','aramos','arais','aran'],
+            desinencias = {'ar':['ara','aras','ara','áramos','arais','aran'],
                            'er':['iera','ieras','iera','iéramos','ierais','ieran'],
                            'ir':['iera','ieras','iera','iéramos','ierais','ieran']}
             return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
+        elif tempo=='preterito imperfecto -ese':
+            desinencias = {'ar':['ase','ases','ase','ásemos','aseis','asen'],
+                           'er':['iese','ieses','iese','iésemos','ieseis','iesen'],
+                           'ir':['iese','ieses','iese','iésemos','ieseis','iesen']}
+            return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
+        elif tempo=='preterito perfecto':
+            haber = ['haya','hayas','haya','hayamos','hayáis','haian']
+            return ["{} {}".format(h,self.participio) for h in haber]
+        elif tempo=='preterito pluscuamperfecto':
+            haber = ['hubiera','hubieras','hubiera','hubiéramos','hubierais''hubieran']
+            return ["{} {}".format(h,self.participio) for h in haber]
+        elif tempo=='preterito pluscuamperfecto -ese':
+            haber = ['hubiese','hubieses','hubiese','hubiésemos','hubieseis''hubiesen']
+            return ["{} {}".format(h,self.participio) for h in haber]
+
+    def imperativo(self, tempo):
+        if tempo='afirmativo':
+            desinencias = {'ar':['a','e','emos','ad','en'],
+                           'er':['e','as','amos','ed','an'],
+                           'ir':['e','as','amos','id','an']}
+            return [""]+[self.infinitivo[-2]+d for d in desinencias[self.classe]]
+
 
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
