@@ -29,17 +29,22 @@ class conjugator:
         self.gerundio = verbo[:-1]+ (self.classe=="ir" and "iendo" or "ndo") 
         self.participio = verbo[:-1]+"do" if self.classe!="er" else verbo[:-2]+"ido"
 
-    def presente(self):
-        desinencias = {'ar':['o','as','a','amos','áis','an'],
-                       'er':['o','es','e','emos','éis','en'],
-                       'ir':['o','es','e','imos','ís','en']}
-        return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-
-    def imperfecto(self):
-        desinencias = {'ar':['aba','abas','aba','ábamos','abais','aban'],
-                       'er':['ía','ías','ía','íamos','íais','ían'],
-                       'ir':['ía','ías','ía','íamos','íais','ían']}
-        return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+    def indicativo(self, tempo):
+        if tempo=='presente':
+            desinencias = {'ar':['o','as','a','amos','áis','an'],
+                           'er':['o','es','e','emos','éis','en'],
+                           'ir':['o','es','e','imos','ís','en']}
+            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+        elif tempo=='preterito imperfecto':
+            desinencias = {'ar':['aba','abas','aba','ábamos','abais','aban'],
+                           'er':['ía','ías','ía','íamos','íais','ían'],
+                           'ir':['ía','ías','ía','íamos','íais','ían']}
+            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+        elif tempo=='preterito perfecto simple':
+            desinencias = {'ar':['é','amaste','ó','amos','asteis','aron'],
+                           'er':['í','iste','ió','imos','isteis','ieron'],
+                           'ir':['í','iste','ió','imos','isteis','ieron']}
+            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
 
 
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
