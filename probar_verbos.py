@@ -6,8 +6,6 @@ from queue import deque
 from functools import reduce
 import bisect
 
-base_dir="/home/matteo/Spanish/conjugator/"
-
 code_map = {'indicativo':{'conditional compuesto':'icc',
                           'conditional simple':'ics',
                           'futuro simple':'ifs',
@@ -26,8 +24,8 @@ code_map = {'indicativo':{'conditional compuesto':'icc',
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in temp}
-verbs = os.listdir(base_dir+'verbos')
-stats = base_dir+'stats'
+verbs = os.listdir('verbos')
+stats = 'stats'
 
 
 # read the stats
@@ -48,7 +46,7 @@ if np.random.rand()<prob_random_choice:
     verb = np.random.choice(verbs)
     #mood = np.random.choice(['imperativo'])#['indicativo','subjuntivo','imperativo'] 
     mood = np.random.choice(['indicativo','subjuntivo','imperativo'])
-    tempo = np.random.choice(os.listdir(base_dir+os.path.join('verbos',verb,mood)))
+    tempo = np.random.choice(os.listdir(os.path.join('verbos',verb,mood)))
     verb_code = '{}_{}'.format(verb,code_map[mood][tempo])
 else:
     # choice with a prob proportional to the number of errors
@@ -65,7 +63,7 @@ else:
 
 
 
-with open(base_dir+os.path.join('verbos',verb,mood,tempo)) as f:
+with open(os.path.join('verbos',verb,mood,tempo)) as f:
     # ask for a verb conj
     print(verb)
     print(mood, tempo)
