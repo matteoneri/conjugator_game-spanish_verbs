@@ -98,7 +98,7 @@ _temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in
 _temp = reduce(lambda x,y: x.extend(y) or x, _temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in _temp}
 del _temp
-verbs = os.listdir('verbos_irregulares')+['reg_ar','reg_er','reg_ir']*1000
+verbs = os.listdir('verbos_irregulares')+['reg.ar','reg.er','reg.ir']*222
 stats = 'stats'
 
 if __name__=='__main__':
@@ -139,7 +139,7 @@ if __name__=='__main__':
 
 
     # ask for a verb conj
-    if verb in ['reg_ar','reg_er','reg_ir']:
+    if verb in ['reg.ar','reg.er','reg.ir']:
         with open('verbos_regulares/{}'.format(verb)) as reg_f:
             verbs_meanings = [l for l in reg_f]
             verb_meaning = np.random.choice(verbs_meanings)
