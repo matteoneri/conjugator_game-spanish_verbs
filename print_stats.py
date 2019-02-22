@@ -21,14 +21,14 @@ temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in 
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in temp}
 
-with open('stats') as f:
+with open('/home/matteo/Spanish/conjugator/stats') as f:
     stats = json.load(f)
     
 data = []
 for k,v in stats.items():
     verb, code  = k.split("_")
     modo, tempo = code_map_inverse[code]
-    data.append((verb, modo, tempo, sum(v)/len(v)*100))
+    data.append((verb, modo, tempo, sum(v)/len(v)*100, v))
 
-df = pd.DataFrame(data, columns=['verb','modo','tempo','precision'])
+df = pd.DataFrame(data, columns=['verb','modo','tempo','precision','streak'])
 print(df.sort_values(['precision','verb','modo','tempo']))
