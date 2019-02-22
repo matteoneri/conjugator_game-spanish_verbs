@@ -46,6 +46,13 @@ class conjugator:
                            'ir':['í','iste','ió','imos','isteis','ieron']}
             return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
 
+    def subjuntivo(self, tempo):
+        if tempo=='presente':
+            desinencias = {'ar':['e','es','e','emos','éis','en'],
+                           'er':['a','as','a','amos','áis','an'],
+                           'ir':['a','as','a','amos','áis','an']}
+            return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
+
 
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
