@@ -67,7 +67,11 @@ class conjugator:
                            'er':['a','as','a','amos','áis','an'],
                            'ir':['a','as','a','amos','áis','an']}
             return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
-
+        elif tempo=='preterito imperfecto':
+            desinencias = {'ar':['ara','aras','ara','aramos','arais','aran'],
+                           'er':['iera','ieras','iera','iéramos','ierais','ieran'],
+                           'ir':['iera','ieras','iera','iéramos','ierais','ieran']}
+            return [self.infinitivo[-2]+d for d in desinencias[self.classe]]
 
 temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in code_map.items()]
 temp = reduce(lambda x,y: x.extend(y) or x, temp, [])
