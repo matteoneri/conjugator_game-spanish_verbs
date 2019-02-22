@@ -53,7 +53,7 @@ code_map_inverse = {code:(modo,tempo) for code,modo,tempo in temp}
 verbs = os.listdir('verbos')
 stats = 'stats'
 
-if __main__=='__main__':
+if __name__=='__main__':
     # read the stats
     s = defaultdict(list) 
     if os.path.isfile(stats):
