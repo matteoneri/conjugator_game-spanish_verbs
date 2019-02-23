@@ -69,7 +69,7 @@ class Conjugator:
             haber = ['hubiera','hubieras','hubiera','hubiéramos','hubierais''hubieran']
             return ["{} {}".format(h,self.participio) for h in haber]
         elif tempo=='preterito pluscuamperfecto -ese':
-            haber = ['hubiese','hubieses','hubiese','hubiésemos','hubieseis''hubiesen']
+            haber = ['hubiese','hubieses','hubiese','hubiésemos','hubieseis','hubiesen']
             return ["{} {}".format(h,self.participio) for h in haber]
 
     def imperativo(self, tempo):
