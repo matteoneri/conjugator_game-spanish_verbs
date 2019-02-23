@@ -75,8 +75,8 @@ class Conjugator:
     def imperativo(self, tempo):
         if tempo=='afirmativo':
             desinencias = {'ar':['a','e','emos','ad','en'],
-                           'er':['e','as','amos','ed','an'],
-                           'ir':['e','as','amos','id','an']}
+                           'er':['e','a','amos','ed','an'],
+                           'ir':['e','a','amos','id','an']}
             return [""]+[self.infinitivo[:-2]+d for d in desinencias[self.classe]]
 
 code_map = {'indicativo':{'conditional perfecto':'icp',
