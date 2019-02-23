@@ -63,7 +63,7 @@ class Conjugator:
                            'ir':['iese','ieses','iese','iésemos','ieseis','iesen']}
             return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
         elif tempo=='preterito perfecto':
-            haber = ['haya','hayas','haya','hayamos','hayáis','haian']
+            haber = ['haya','hayas','haya','hayamos','hayáis','hayan']
             return ["{} {}".format(h,self.participio) for h in haber]
         elif tempo=='preterito pluscuamperfecto':
             haber = ['hubiera','hubieras','hubiera','hubiéramos','hubierais''hubieran']
