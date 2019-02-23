@@ -98,7 +98,7 @@ _temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in
 _temp = reduce(lambda x,y: x.extend(y) or x, _temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in _temp}
 del _temp
-verbs = os.listdir('verbos_irregulares')+['reg.ar','reg.er','reg.ir']*222
+verbs = os.listdir('verbos_irregulares')+['reg.ar','reg.er','reg.ir']*2
 stats = 'stats'
 
 if __name__=='__main__':
