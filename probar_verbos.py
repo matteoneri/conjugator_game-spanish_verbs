@@ -107,7 +107,7 @@ if __name__=='__main__':
     if os.path.isfile(stats):
         with open(stats) as s_file:
             s.update(json.load(s_file))
-        avg_perc = np.mean([sum(v)/len(v) for v in s.values()])
+        avg_perc = np.mean([sum([i>0 for i in v])/len(v) for v in s.values()])
         if avg_perc>0.5:
             prob_random_choice = 0.8
         else:
@@ -115,17 +115,18 @@ if __name__=='__main__':
     else:
         prob_random_choice = 1
 
+    # tie a verb, mood, tempo
     if np.random.rand()<prob_random_choice:
         # random choice
         verb = np.random.choice(verbs)
         #mood = np.random.choice(['imperativo'])#['indicativo','subjuntivo','imperativo'] 
-        mood = np.random.choice(['indicativo','subjuntivo','imperativo'],p=np.array([8,6,1])/sum([8,6,1]))
+        mood = np.random.choice(['indicativo','subjuntivo','imperativo'],p=np.array([6,4,1])/sum([6,4,1]))
         tempo = np.random.choice(os.listdir(os.path.join('verbos_irregulares','ir',mood)))
         code = code_map[mood][tempo]
         verb_code = '{}_{}'.format(verb,code)
     else:
         # choice with a prob proportional to the number of errors
-        probs = np.array([(len(v)-sum(v)+0.2/len(v)) for v in s.values()])
+        probs = np.array([(len(v)-sum([i>0 for i in v])+0.2/len(v)) for v in s.values()])
         #print(s)
         #print(probs)
         probs= np.cumsum(probs/probs.sum())
@@ -138,39 +139,83 @@ if __name__=='__main__':
 
 
 
-    # ask for a verb conj
-    if verb in ['reg.ar','reg.er','reg.ir']:
-        with open('verbos_regulares/{}'.format(verb)) as reg_f:
-            verbs_meanings = [l for l in reg_f]
-            verb_meaning = np.random.choice(verbs_meanings)
-            verb, meaning = verb_meaning.strip().split(':')
-            print('{} - {}'.format(verb, meaning))
-            c = Conjugator(verb)
-            conj = c.__getattribute__(mood)(tempo)
+    if np.random.rand()<0.2:
+        # ask for a verb conj
+        if verb in ['reg.ar','reg.er','reg.ir']:
+            with open('verbos_regulares/{}'.format(verb)) as reg_f:
+                verbs_meanings = [l for l in reg_f]
+                verb_meaning = np.random.choice(verbs_meanings)
+                verb, meaning = verb_meaning.strip().split(':')
+                print('{} - {}'.format(verb, meaning))
+                c = Conjugator(verb)
+                conj = c.__getattribute__(mood)(tempo)
+        else:
+            print(verb)
+            with open(os.path.join('verbos_irregulares',verb,mood,tempo)) as irr_f:
+                conj = [v for v in irr_f]
+
+        print(mood, tempo)
+        print()
+        err = False
+
+        for p,v in zip(['yo','tu','el/ella','nosotros','vosotros','ell@s'],conj):
+            if mood=='imperativo':
+                if p=='yo': continue
+            i = input('{} '.format(p))
+            if i!=v.strip():
+                print('No! {} {}'.format(p, v))
+                err=True
+
+        # change stat
+        temp = deque(s[verb_code],5)
+        temp.append(1-err)
+        s[verb_code] = list(temp)
+        #print(sum(temp)/len(temp))
+        with open(stats, 'w') as s_file:
+            json.dump(s, s_file)
+
     else:
-        print(verb)
-        with open(os.path.join('verbos_irregulares',verb,mood,tempo)) as irr_f:
-            conj = [v for v in irr_f]
-
-    print(mood, tempo)
-    print()
-    err = False
-
-    for p,v in zip(['yo','tu','el/ella','nosotros','vosotros','ell@s'],conj):
+        # ask for a verb conj
+        tempos = os.listdir("verbos_irregulares/{}/{}".format('ir',mood))
+        person = np.random.choice(range(6))
         if mood=='imperativo':
-            if p=='yo': continue
-        i = input('{} '.format(p))
-        if i!=v.strip():
-            print('No! {} {}'.format(p, v))
-            err=True
+            if person==0:
+                person = 1
+        if verb in ['reg.ar','reg.er','reg.ir']:
+            with open('verbos_regulares/{}'.format(verb)) as reg_f:
+                verbs_meanings = [l for l in reg_f]
+                verb_meaning = np.random.choice(verbs_meanings)
+                verbo, meaning = verb_meaning.strip().split(':')
+                print('{} - {}'.format(verbo, meaning))
+        else:
+            verbo = verb
+            print(verbo)
+        print(mood)
+        print()
 
-    # change stat
-    temp = deque(s[verb_code],5)
-    temp.append(1-err)
-    s[verb_code] = list(temp)
-    #print(sum(temp)/len(temp))
-    with open(stats, 'w') as s_file:
-        json.dump(s, s_file)
+        for tempo in tempos:
+            code = code_map[mood][tempo]
+            verb_code = '{}_{}'.format(verb,code)
 
+            if verb in ['reg.ar','reg.er','reg.ir']:
+                c = Conjugator(verbo)
+                conj = c.__getattribute__(mood)(tempo)
+            else:
+                with open(os.path.join('verbos_irregulares',verbo,mood,tempo)) as irr_f:
+                    conj = [v for v in irr_f]
 
+            err = False
+            p,v = list(zip(['yo','tu','el/ella','nosotros','vosotros','ell@s'],conj))[person]
+            i = input('({:15}) {} '.format(tempo, p))
+            if i!=v.strip():
+                print('No! {} {}'.format(p, v))
+                err=True
+
+            # change stat
+            temp_var = deque(s[verb_code],5)
+            temp_var.append((1-err)*0.2)
+            s[verb_code] = list(temp_var)
+            #print(sum(temp)/len(temp))
+            with open(stats, 'w') as s_file:
+                json.dump(s, s_file)
 
