@@ -163,7 +163,7 @@ if __name__=='__main__':
         mood, tempo = code_map_inverse[code]
 
 
-    if np.random.rand()<0.2:
+    if np.random.rand()<0.4:
         # ask for a verb conj
         if verb in ['reg.ar','reg.er','reg.ir']:
             with open('verbos_regulares/{}'.format(verb)) as reg_f:

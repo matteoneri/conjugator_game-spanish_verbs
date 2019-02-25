@@ -31,4 +31,6 @@ for k,v in stats.items():
     data.append((verb, modo, tempo, sum(v)/len(v)*100, v))
 
 df = pd.DataFrame(data, columns=['verb','modo','tempo','precision','streak'])
+df = df[df.precision<50]
 print(df.sort_values(['precision','verb','modo','tempo']))
+print("n verbs studied: ", df['verb'].nunique())
