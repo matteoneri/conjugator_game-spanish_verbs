@@ -8,76 +8,99 @@ import bisect
 
 
 class Conjugator: 
+    _irregular_verbs_folder = 'verbos_irregulares'
+    _irregular_verbs        = os.listdir(_irregular_verbs_folder)
+
     def __init__(self, verbo):
         self.infinitivo = verbo
         self.classe = verbo[-2:]
-        self.gerundio = verbo[:-1]+ (self.classe=="ir" and "iendo" or "ndo") 
-        self.participio = verbo[:-1]+"do" if self.classe!="er" else verbo[:-2]+"ido"
+        self._regular = verbo not in self._irregular_verbs
+        if not self._regular:
+            with open(os.path.join(self._irregular_verbs_folder, verbo, 'participio')) as f:
+                self.participio = f.readline().strip()
+            #with open(os.path.join(self._irregular_verbs_folder, verbo, 'gerundio')) as f:
+            #    self.gerundio = f.read_line().strip()
+        else:
+            self.gerundio = verbo[:-1]+ (self.classe=="ir" and "iendo" or "ndo") 
+            self.participio = verbo[:-1]+"do" if self.classe!="er" else verbo[:-2]+"ido"
 
     def indicativo(self, tempo):
-        if tempo=='presente':
-            desinencias = {'ar':['o','as','a','amos','áis','an'],
-                           'er':['o','es','e','emos','éis','en'],
-                           'ir':['o','es','e','imos','ís','en']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='preterito imperfecto':
-            desinencias = {'ar':['aba','abas','aba','ábamos','abais','aban'],
-                           'er':['ía','ías','ía','íamos','íais','ían'],
-                           'ir':['ía','ías','ía','íamos','íais','ían']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='preterito perfecto simple':
-            desinencias = {'ar':['é','amaste','ó','amos','asteis','aron'],
-                           'er':['í','iste','ió','imos','isteis','ieron'],
-                           'ir':['í','iste','ió','imos','isteis','ieron']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='conditional simple':
-            desinencias = ['ía','ías','ía','íamos','íais','ían']
-            return [self.infinitivo+d for d in desinencias]
-        elif tempo=='preterito perfecto compuesto':
-            haber = ['he','has','ha','hemos','habéis','han']
-            return ["{} {}".format(h,self.participio) for h in haber]
-        elif tempo=='preterito pluscuamperfecto':
-            haber = ['había','habías','había','habíamos','habíais','habían']
-            return ["{} {}".format(h,self.participio) for h in haber]
-        elif tempo=='conditional perfecto':
-            haber = ['habría','habrías','habría','habríamos','habríais','habrían']
-            return ["{} {}".format(h,self.participio) for h in haber]
-        elif tempo=='futuro simple':
-            desinencias = ['é','ás','á','emos','éis','án']
-            return [self.infinitivo+d for d in desinencias]
+        if self._regular:
+            if tempo=='presente':
+                desinencias = {'ar':['o','as','a','amos','áis','an'],
+                               'er':['o','es','e','emos','éis','en'],
+                               'ir':['o','es','e','imos','ís','en']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='preterito imperfecto':
+                desinencias = {'ar':['aba','abas','aba','ábamos','abais','aban'],
+                               'er':['ía','ías','ía','íamos','íais','ían'],
+                               'ir':['ía','ías','ía','íamos','íais','ían']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='preterito perfecto simple':
+                desinencias = {'ar':['é','amaste','ó','amos','asteis','aron'],
+                               'er':['í','iste','ió','imos','isteis','ieron'],
+                               'ir':['í','iste','ió','imos','isteis','ieron']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='conditional simple':
+                desinencias = ['ía','ías','ía','íamos','íais','ían']
+                return [self.infinitivo+d for d in desinencias]
+            elif tempo=='preterito perfecto compuesto':
+                haber = ['he','has','ha','hemos','habéis','han']
+                return ["{} {}".format(h,self.participio) for h in haber]
+            elif tempo=='preterito pluscuamperfecto':
+                haber = ['había','habías','había','habíamos','habíais','habían']
+                return ["{} {}".format(h,self.participio) for h in haber]
+            elif tempo=='conditional perfecto':
+                haber = ['habría','habrías','habría','habríamos','habríais','habrían']
+                return ["{} {}".format(h,self.participio) for h in haber]
+            elif tempo=='futuro simple':
+                desinencias = ['é','ás','á','emos','éis','án']
+                return [self.infinitivo+d for d in desinencias]
+        else:
+            with open(os.path.join(self._irregular_verbs_folder,self.infinitivo,'indicativo',tempo)) as f:
+                return [l.strip() for l in f.readlines()]
 
-    def subjuntivo(self, tempo):
-        if tempo=='presente':
-            desinencias = {'ar':['e','es','e','emos','éis','en'],
-                           'er':['a','as','a','amos','áis','an'],
-                           'ir':['a','as','a','amos','áis','an']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='preterito imperfecto':
-            desinencias = {'ar':['ara','aras','ara','áramos','arais','aran'],
-                           'er':['iera','ieras','iera','iéramos','ierais','ieran'],
-                           'ir':['iera','ieras','iera','iéramos','ierais','ieran']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='preterito imperfecto -ese':
-            desinencias = {'ar':['ase','ases','ase','ásemos','aseis','asen'],
-                           'er':['iese','ieses','iese','iésemos','ieseis','iesen'],
-                           'ir':['iese','ieses','iese','iésemos','ieseis','iesen']}
-            return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
-        elif tempo=='preterito perfecto':
-            haber = ['haya','hayas','haya','hayamos','hayáis','hayan']
-            return ["{} {}".format(h,self.participio) for h in haber]
-        elif tempo=='preterito pluscuamperfecto':
-            haber = ['hubiera','hubieras','hubiera','hubiéramos','hubierais''hubieran']
-            return ["{} {}".format(h,self.participio) for h in haber]
-        elif tempo=='preterito pluscuamperfecto -ese':
-            haber = ['hubiese','hubieses','hubiese','hubiésemos','hubieseis','hubiesen']
-            return ["{} {}".format(h,self.participio) for h in haber]
+    def subjuntivo(self, tempo): 
+        if self._regular:
+            if tempo=='presente':
+                desinencias = {'ar':['e','es','e','emos','éis','en'],
+                               'er':['a','as','a','amos','áis','an'],
+                               'ir':['a','as','a','amos','áis','an']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='preterito imperfecto':
+                desinencias = {'ar':['ara','aras','ara','áramos','arais','aran'],
+                               'er':['iera','ieras','iera','iéramos','ierais','ieran'],
+                               'ir':['iera','ieras','iera','iéramos','ierais','ieran']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='preterito imperfecto -ese':
+                desinencias = {'ar':['ase','ases','ase','ásemos','aseis','asen'],
+                               'er':['iese','ieses','iese','iésemos','ieseis','iesen'],
+                               'ir':['iese','ieses','iese','iésemos','ieseis','iesen']}
+                return [self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+            elif tempo=='preterito perfecto':
+                haber = ['haya','hayas','haya','hayamos','hayáis','hayan']
+                return ["{} {}".format(h,self.participio) for h in haber]
+            elif tempo=='preterito pluscuamperfecto':
+                haber = ['hubiera','hubieras','hubiera','hubiéramos','hubierais''hubieran']
+                return ["{} {}".format(h,self.participio) for h in haber]
+            elif tempo=='preterito pluscuamperfecto -ese':
+                haber = ['hubiese','hubieses','hubiese','hubiésemos','hubieseis','hubiesen']
+                return ["{} {}".format(h,self.participio) for h in haber]
+        else:
+            with open(os.path.join(self._irregular_verbs_folder,self.infinitivo,'subjuntivo',tempo)) as f:
+                return [l.strip() for l in f.readlines()]
 
     def imperativo(self, tempo):
-        if tempo=='afirmativo':
-            desinencias = {'ar':['a','e','emos','ad','en'],
-                           'er':['e','a','amos','ed','an'],
-                           'ir':['e','a','amos','id','an']}
-            return [""]+[self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+        if self._regular:
+            if tempo=='afirmativo':
+                desinencias = {'ar':['a','e','emos','ad','en'],
+                               'er':['e','a','amos','ed','an'],
+                               'ir':['e','a','amos','id','an']}
+                return [""]+[self.infinitivo[:-2]+d for d in desinencias[self.classe]]
+        else:
+            with open(os.path.join(self._irregular_verbs_folder,self.infinitivo,'imperativo',tempo)) as f:
+                return [l.strip() for l in f.readlines()]
+
 
 code_map = {'indicativo':{'conditional perfecto':'icp',
                           'conditional simple':'ics',
@@ -98,8 +121,11 @@ _temp = [[(code,modo,tempo) for tempo,code in tempos.items()] for modo,tempos in
 _temp = reduce(lambda x,y: x.extend(y) or x, _temp, [])
 code_map_inverse = {code:(modo,tempo) for code,modo,tempo in _temp}
 del _temp
+
+
 verbs = os.listdir('verbos_irregulares')+['reg.ar','reg.er','reg.ir']*2
 stats = 'stats'
+
 
 if __name__=='__main__':
     # read the stats
@@ -137,8 +163,6 @@ if __name__=='__main__':
         mood, tempo = code_map_inverse[code]
 
 
-
-
     if np.random.rand()<0.2:
         # ask for a verb conj
         if verb in ['reg.ar','reg.er','reg.ir']:
@@ -147,12 +171,11 @@ if __name__=='__main__':
                 verb_meaning = np.random.choice(verbs_meanings)
                 verb, meaning = verb_meaning.strip().split(':')
                 print('{} - {}'.format(verb, meaning))
-                c = Conjugator(verb)
-                conj = c.__getattribute__(mood)(tempo)
         else:
             print(verb)
-            with open(os.path.join('verbos_irregulares',verb,mood,tempo)) as irr_f:
-                conj = [v for v in irr_f]
+
+        c = Conjugator(verb)
+        conj = c.__getattribute__(mood)(tempo)
 
         print(mood, tempo)
         print()
@@ -176,7 +199,7 @@ if __name__=='__main__':
 
     else:
         # ask for a verb conj
-        tempos = os.listdir("verbos_irregulares/{}/{}".format('ir',mood))
+        tempos = [k for k in code_map[mood].keys()]
         person = np.random.choice(range(6))
         if mood=='imperativo':
             if person==0:
@@ -197,16 +220,12 @@ if __name__=='__main__':
             code = code_map[mood][tempo]
             verb_code = '{}_{}'.format(verb,code)
 
-            if verb in ['reg.ar','reg.er','reg.ir']:
-                c = Conjugator(verbo)
-                conj = c.__getattribute__(mood)(tempo)
-            else:
-                with open(os.path.join('verbos_irregulares',verbo,mood,tempo)) as irr_f:
-                    conj = [v for v in irr_f]
+            c = Conjugator(verbo)
+            conj = c.__getattribute__(mood)(tempo)
 
             err = False
             p,v = list(zip(['yo','tu','el/ella','nosotros','vosotros','ell@s'],conj))[person]
-            i = input('({:15}) {} '.format(tempo, p))
+            i = input('({:31}) {} '.format(tempo, p))
             if i!=v.strip():
                 print('No! {} {}'.format(p, v))
                 err=True
@@ -218,4 +237,3 @@ if __name__=='__main__':
             #print(sum(temp)/len(temp))
             with open(stats, 'w') as s_file:
                 json.dump(s, s_file)
-
