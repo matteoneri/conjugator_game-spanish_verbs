@@ -2,7 +2,7 @@ import json
 import pandas as pd
 from functools import reduce
 
-code_map = {'indicativo':{'conditional compuesto':'icc',
+code_map = {'indicativo':{'conditional perfecto':'icp',
                           'conditional simple':'ics',
                           'futuro simple':'ifs',
                           'presente':'ip',
